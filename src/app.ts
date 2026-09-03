@@ -17,10 +17,25 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
-// Health check endpoint
+import { dbState } from './config/dbState.js';
+
+// Root endpoint
+app.get('/', (_req: Request, res: Response) => {
+  res.json({
+    service: 'CampusLoop REST API',
+    status: 'online',
+    health: '/health',
+    api: '/api',
+    docs: 'Circular Resource-Sharing Platform for College Students',
+  });
+});
+
+// Health check endpoint (for Cloud Run probes & uptime checks)
 app.get('/health', (_req: Request, res: Response) => {
+  const dbConnected = dbState.isConnected();
   res.json({
     status: 'healthy',
+    database: dbConnected ? 'connected' : 'connecting',
     timestamp: new Date().toISOString(),
     service: 'campusloop-backend',
     version: '1.0.0',
