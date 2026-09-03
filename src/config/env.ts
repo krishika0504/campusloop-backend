@@ -8,4 +8,7 @@ export const ENV = {
   JWT_SECRET: process.env.JWT_SECRET || 'campusloop_jwt_secret_dev_key_2026_super_secure_academic',
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '7d',
   CORS_ORIGIN: process.env.CORS_ORIGIN || '*',
+  GCP_API_KEY: process.env.GCP_API_KEY || '',
+  GCP_PROJECT_ID: process.env.GCP_PROJECT_ID || 'garbage-fa1b3',
+  CLOUD_RUN_URL: process.env.CLOUD_RUN_URL || 'https://campusloopbackend-853669501284.europe-west1.run.app',
 };
