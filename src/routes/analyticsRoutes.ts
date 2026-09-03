@@ -8,6 +8,7 @@ router.use(authenticateToken);
 
 router.get('/kpis', analyticsController.getDashboardKpis);
 router.get('/monthly', analyticsController.getMonthlyCirculation);
+router.get('/circulation-trend', analyticsController.getMonthlyCirculation);
 router.get('/categories', analyticsController.getCategoryMetrics);
 router.get('/leaderboard', analyticsController.getCollegeLeaderboard);
 
