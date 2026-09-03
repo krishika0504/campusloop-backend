@@ -1,0 +1,40 @@
+import { Router } from 'express';
+import authRoutes from './authRoutes.js';
+import collegeRoutes from './collegeRoutes.js';
+import collegeAdminRoutes from './collegeAdminRoutes.js';
+import studentRoutes from './studentRoutes.js';
+import itemRoutes from './itemRoutes.js';
+import requestRoutes from './requestRoutes.js';
+import conversationRoutes from './conversationRoutes.js';
+import offerRoutes from './offerRoutes.js';
+import transactionRoutes from './transactionRoutes.js';
+import pickupRoutes from './pickupRoutes.js';
+import ratingRoutes from './ratingRoutes.js';
+import reportRoutes from './reportRoutes.js';
+import analyticsRoutes from './analyticsRoutes.js';
+import impactRoutes from './impactRoutes.js';
+import revenueRoutes from './revenueRoutes.js';
+import notificationRoutes from './notificationRoutes.js';
+import auditRoutes from './auditRoutes.js';
+
+const router = Router();
+
+router.use('/auth', authRoutes);
+router.use('/colleges', collegeRoutes);
+router.use('/college-admins', collegeAdminRoutes);
+router.use('/students', studentRoutes);
+router.use('/items', itemRoutes);
+router.use('/requests', requestRoutes);
+router.use('/conversations', conversationRoutes);
+router.use('/offers', offerRoutes);
+router.use('/transactions', transactionRoutes);
+router.use('/pickup-locations', pickupRoutes);
+router.use('/ratings', ratingRoutes);
+router.use('/reports', reportRoutes);
+router.use('/analytics', analyticsRoutes);
+router.use('/impact', impactRoutes);
+router.use('/revenue', revenueRoutes);
+router.use('/notifications', notificationRoutes);
+router.use('/audit-logs', auditRoutes);
+
+export default router;
