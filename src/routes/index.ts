@@ -16,6 +16,7 @@ import impactRoutes from './impactRoutes.js';
 import revenueRoutes from './revenueRoutes.js';
 import notificationRoutes from './notificationRoutes.js';
 import auditRoutes from './auditRoutes.js';
+import uploadRoutes from './uploadRoutes.js';
 
 const router = Router();
 
@@ -24,6 +25,7 @@ router.use('/colleges', collegeRoutes);
 router.use('/college-admins', collegeAdminRoutes);
 router.use('/students', studentRoutes);
 router.use('/items', itemRoutes);
+router.use('/upload', uploadRoutes);
 router.use('/requests', requestRoutes);
 router.use('/conversations', conversationRoutes);
 router.use('/offers', offerRoutes);
