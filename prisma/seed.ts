@@ -10,9 +10,9 @@ const prisma = new PrismaClient({
 });
 
 async function main() {
-  console.log('Seeding CampusLoop database...');
+  console.log('Resetting CampusLoop database for MIT CSN (mit.asia)...');
 
-  // 1. Clean existing data safely
+  // 1. Clean existing data safely in reverse dependency order
   await prisma.auditLog.deleteMany();
   await prisma.revenue.deleteMany();
   await prisma.subscription.deleteMany();
@@ -36,70 +36,26 @@ async function main() {
   const collegeAdminHash = await bcrypt.hash('CollegeAdmin123!', salt);
   const studentHash = await bcrypt.hash('Student123!', salt);
 
-  // 2. Create Colleges
-  const iitb = await prisma.college.create({
+  // 2. Create Single College: MIT CSN
+  const mitCsn = await prisma.college.create({
     data: {
-      name: 'Indian Institute of Technology Bombay',
-      code: 'IITB',
-      emailDomain: 'iitb.ac.in',
-      address: 'Powai',
-      city: 'Mumbai',
+      name: 'MIT CSN',
+      code: 'MIT_CSN',
+      emailDomain: 'mit.asia',
+      address: 'MIT CSN Campus, Beed Bypass Road',
+      city: 'Chhatrapati Sambhajinagar',
       state: 'Maharashtra',
       country: 'India',
-      contactPerson: 'Dr. R. K. Sharma',
-      contactEmail: 'campus.admin@iitb.ac.in',
-      contactPhone: '+91 22 2576 7000',
-      adminName: 'Prof. S. V. Joshi',
+      contactPerson: 'Dr. S. K. Patil',
+      contactEmail: 'admin@mit.asia',
+      contactPhone: '+91 240 237 5000',
+      adminName: 'Prof. A. R. Kulkarni',
       status: 'ACTIVE',
       subscriptionPlan: 'PREMIUM',
       subscriptionStatus: 'ACTIVE',
-      circularityScore: 88.5,
-      studentCount: 1420,
-      listingCount: 385,
-    },
-  });
-
-  const stanford = await prisma.college.create({
-    data: {
-      name: 'Stanford University',
-      code: 'STANFORD',
-      emailDomain: 'stanford.edu',
-      address: '450 Jane Stanford Way',
-      city: 'Stanford',
-      state: 'California',
-      country: 'USA',
-      contactPerson: 'Elena Rostova',
-      contactEmail: 'sustainability@stanford.edu',
-      contactPhone: '+1 650 723 2300',
-      adminName: 'Dr. Michael Chang',
-      status: 'ACTIVE',
-      subscriptionPlan: 'ENTERPRISE',
-      subscriptionStatus: 'ACTIVE',
-      circularityScore: 92.0,
-      studentCount: 2150,
-      listingCount: 520,
-    },
-  });
-
-  const du = await prisma.college.create({
-    data: {
-      name: 'University of Delhi',
-      code: 'DU',
-      emailDomain: 'du.ac.in',
-      address: 'North Campus',
-      city: 'New Delhi',
-      state: 'Delhi',
-      country: 'India',
-      contactPerson: 'P. N. Mathur',
-      contactEmail: 'registrar@du.ac.in',
-      contactPhone: '+91 11 2766 7011',
-      adminName: 'Dr. Anita Gupta',
-      status: 'ACTIVE',
-      subscriptionPlan: 'STANDARD',
-      subscriptionStatus: 'ACTIVE',
-      circularityScore: 76.5,
-      studentCount: 3400,
-      listingCount: 410,
+      circularityScore: 94.5,
+      studentCount: 3200,
+      listingCount: 6,
     },
   });
 
@@ -115,14 +71,14 @@ async function main() {
     },
   });
 
-  // 4. Create College Admins
-  const iitbAdmin = await prisma.user.create({
+  // 4. Create MIT CSN College Admin
+  const mitAdmin = await prisma.user.create({
     data: {
-      name: 'IIT Bombay Campus Admin',
-      email: 'admin.iitb@campusloop.in',
+      name: 'MIT CSN Campus Admin',
+      email: 'admin@mit.asia',
       passwordHash: collegeAdminHash,
       role: 'COLLEGE_ADMIN',
-      collegeId: iitb.id,
+      collegeId: mitCsn.id,
       verificationStatus: 'VERIFIED',
       trustRating: 5.0,
     },
@@ -130,139 +86,82 @@ async function main() {
 
   await prisma.collegeAdmin.create({
     data: {
-      userId: iitbAdmin.id,
-      collegeId: iitb.id,
+      userId: mitAdmin.id,
+      collegeId: mitCsn.id,
       assignedBy: superAdmin.id,
     },
   });
 
-  const stanfordAdmin = await prisma.user.create({
-    data: {
-      name: 'Stanford Campus Admin',
-      email: 'admin.stanford@campusloop.in',
-      passwordHash: collegeAdminHash,
-      role: 'COLLEGE_ADMIN',
-      collegeId: stanford.id,
-      verificationStatus: 'VERIFIED',
-      trustRating: 5.0,
-    },
-  });
-
-  await prisma.collegeAdmin.create({
-    data: {
-      userId: stanfordAdmin.id,
-      collegeId: stanford.id,
-      assignedBy: superAdmin.id,
-    },
-  });
-
-  // 5. Create Students
+  // 5. Create Students with @mit.asia domain
   const aniket = await prisma.user.create({
     data: {
       name: 'Aniket Sharma',
-      email: 'aniket@iitb.ac.in',
+      email: 'aniket@mit.asia',
       passwordHash: studentHash,
       role: 'STUDENT',
-      collegeId: iitb.id,
+      collegeId: mitCsn.id,
       department: 'Computer Science & Engineering',
-      rollNumber: '210050012',
+      rollNumber: 'MIT-CSN-2022-045',
       academicYear: 'Senior (4th Year)',
       verificationStatus: 'VERIFIED',
       verifiedAt: new Date(),
       trustRating: 4.9,
-      totalTransactions: 16,
-      co2SavedKg: 42.5,
-      moneySavedUsd: 380.0,
-      itemsCirculated: 12,
+      totalTransactions: 18,
+      co2SavedKg: 48.5,
+      moneySavedUsd: 410.0,
+      itemsCirculated: 14,
     },
   });
 
   const priya = await prisma.user.create({
     data: {
       name: 'Priya Sharma',
-      email: 'priya@iitb.ac.in',
+      email: 'priya@mit.asia',
       passwordHash: studentHash,
       role: 'STUDENT',
-      collegeId: iitb.id,
+      collegeId: mitCsn.id,
       department: 'Electrical Engineering',
-      rollNumber: '220070045',
+      rollNumber: 'MIT-CSN-2023-112',
       academicYear: 'Junior (3rd Year)',
       verificationStatus: 'VERIFIED',
       verifiedAt: new Date(),
       trustRating: 4.8,
-      totalTransactions: 9,
-      co2SavedKg: 28.0,
-      moneySavedUsd: 210.0,
-      itemsCirculated: 7,
+      totalTransactions: 11,
+      co2SavedKg: 32.0,
+      moneySavedUsd: 260.0,
+      itemsCirculated: 8,
     },
   });
 
   const rahul = await prisma.user.create({
     data: {
       name: 'Rahul Verma',
-      email: 'rahul@iitb.ac.in',
+      email: 'rahul@mit.asia',
       passwordHash: studentHash,
       role: 'STUDENT',
-      collegeId: iitb.id,
+      collegeId: mitCsn.id,
       department: 'Mechanical Engineering',
-      rollNumber: '230100088',
+      rollNumber: 'MIT-CSN-2024-088',
       academicYear: 'Sophomore (2nd Year)',
-      verificationStatus: 'ID_PENDING',
-      verificationNote: 'Student ID card submitted for batch 2023',
-      trustRating: 5.0,
-      totalTransactions: 2,
-    },
-  });
-
-  const marcus = await prisma.user.create({
-    data: {
-      name: 'Marcus Chen',
-      email: 'marcus@stanford.edu',
-      passwordHash: studentHash,
-      role: 'STUDENT',
-      collegeId: stanford.id,
-      department: 'Electrical & Computer Engineering',
-      rollNumber: 'ST-99482',
-      academicYear: 'Senior (4th Year)',
       verificationStatus: 'VERIFIED',
       verifiedAt: new Date(),
       trustRating: 5.0,
-      totalTransactions: 14,
-      co2SavedKg: 54.0,
-      moneySavedUsd: 490.0,
-      itemsCirculated: 11,
+      totalTransactions: 4,
+      co2SavedKg: 12.5,
+      moneySavedUsd: 95.0,
+      itemsCirculated: 3,
     },
   });
 
-  const sophia = await prisma.user.create({
-    data: {
-      name: 'Sophia Patel',
-      email: 'sophia@stanford.edu',
-      passwordHash: studentHash,
-      role: 'STUDENT',
-      collegeId: stanford.id,
-      department: 'Bioengineering',
-      rollNumber: 'ST-88192',
-      academicYear: 'Junior (3rd Year)',
-      verificationStatus: 'VERIFIED',
-      verifiedAt: new Date(),
-      trustRating: 4.9,
-      totalTransactions: 8,
-      co2SavedKg: 22.0,
-      moneySavedUsd: 195.0,
-      itemsCirculated: 6,
-    },
-  });
-
-  // 6. Create Campus Pickup Hubs
+  // 6. Create MIT CSN Campus Pickup Safe Hubs
   const hubMainGate = await prisma.pickupLocation.create({
     data: {
-      collegeId: iitb.id,
-      name: 'Main Gate Security Hub',
-      building: 'IIT Bombay Main Entrance Gate',
-      description: 'Right beside the Security Information Desk at the Main Gate.',
-      operatingHours: '24/7 (Recommended: 8:00 AM - 9:00 PM)',
-      safetyTips: 'Well-lit area under campus security camera coverage.',
+      collegeId: mitCsn.id,
+      name: 'MIT CSN Main Gate Security Post',
+      building: 'MIT CSN Main Entrance Arch',
+      description: 'Right beside the Security Information Desk at the Main Gate on Beed Bypass Road.',
+      operatingHours: '24/7 (Recommended: 8:00 AM - 8:30 PM)',
+      safetyTips: 'Under 24/7 CCTV surveillance and security guard attendance.',
       isDefault: true,
       status: 'ACTIVE',
     },
@@ -270,54 +169,55 @@ async function main() {
 
   const hubLibrary = await prisma.pickupLocation.create({
     data: {
-      collegeId: iitb.id,
-      name: 'Central Library Lounge',
-      building: 'Central University Library',
-      description: '1st Floor Study Lounge near the Reference Circulation Counter.',
-      operatingHours: '8:00 AM - 11:00 PM',
-      safetyTips: 'Quiet high-traffic study area with secure indoor seating.',
+      collegeId: mitCsn.id,
+      name: 'MIT CSN Central Library Ground Floor',
+      building: 'Central Knowledge & Library Building',
+      description: 'Reference section circulation lobby near the digital catalog terminal.',
+      operatingHours: '8:00 AM - 10:00 PM',
+      safetyTips: 'Quiet, high-visibility academic space with dedicated indoor seating.',
       isDefault: false,
       status: 'ACTIVE',
     },
   });
 
-  const hubHostelQuad = await prisma.pickupLocation.create({
+  const hubCseBlock = await prisma.pickupLocation.create({
     data: {
-      collegeId: iitb.id,
-      name: 'Hostel 12 Central Quad',
-      building: 'Hostel Complex Quadrangle',
-      description: 'Benches near the student activity center and cafeteria.',
-      operatingHours: '9:00 AM - 10:00 PM',
-      safetyTips: 'Popular open public quad for evening handoffs.',
+      collegeId: mitCsn.id,
+      name: 'Computer Science & Engineering Block Atrium',
+      building: 'Department of CSE & IT Quad',
+      description: 'Central open-air atrium near Lab 4 and the department bulletin board.',
+      operatingHours: '8:00 AM - 7:00 PM',
+      safetyTips: 'Active engineering student hub with campus Wi-Fi coverage.',
       isDefault: false,
       status: 'ACTIVE',
     },
   });
 
-  const hubStanfordQuad = await prisma.pickupLocation.create({
+  const hubCafeteria = await prisma.pickupLocation.create({
     data: {
-      collegeId: stanford.id,
-      name: 'Engineering Quad Bench A',
-      building: 'Packard Electrical Engineering Quad',
-      description: 'Outdoor benches near the Packard Quad fountain and cafe.',
-      operatingHours: '8:00 AM - 8:00 PM',
-      safetyTips: 'High-visibility campus quad with campus safety escort available.',
-      isDefault: true,
+      collegeId: mitCsn.id,
+      name: 'Campus Cafeteria Student Hub',
+      building: 'Student Amenities & Dining Complex',
+      description: 'Designated CampusLoop circular table near the cafeteria entrance.',
+      operatingHours: '8:30 AM - 9:00 PM',
+      safetyTips: 'Well-lit dining plaza with high student foot traffic.',
+      isDefault: false,
       status: 'ACTIVE',
     },
   });
 
   // 7. Create Marketplace Items across BUY, SELL, BORROW, EXCHANGE, DONATE, DIGITAL
+  // Item 1: SELL (Textbook)
   const itemBook = await prisma.item.create({
     data: {
       title: 'Engineering Mechanics (Statics & Dynamics 14th Ed)',
-      description: 'Official textbook for ME 101. Zero missing pages, highlighted chapters on truss analysis and friction.',
-      category: 'Textbooks',
+      description: 'Official textbook for ME 101. Zero missing pages, highlighted chapters on truss analysis and friction. Essential for 1st & 2nd year engineering students at MIT CSN.',
+      category: 'Books',
       condition: 'Like New',
       price: 350.0,
       transactionType: 'SELL',
       courseCode: 'ME 101',
-      collegeId: iitb.id,
+      collegeId: mitCsn.id,
       sellerId: aniket.id,
       pickupLocationId: hubLibrary.id,
       pickupLocationName: hubLibrary.name,
@@ -330,15 +230,17 @@ async function main() {
     data: { itemId: itemBook.id, url: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c', order: 0 },
   });
 
+  // Item 2: SELL (Calculator)
   const itemCalc = await prisma.item.create({
     data: {
       title: 'TI-84 Plus CE Graphing Calculator',
-      description: 'Color screen, rechargeable battery included. Excellent for Linear Algebra, Calculus and Signal Processing.',
-      category: 'Electronics',
+      description: 'High-resolution color screen, rechargeable battery included. Excellent for Linear Algebra, Calculus, and Signal Processing.',
+      category: 'Calculators',
       condition: 'Good',
       price: 1200.0,
       transactionType: 'SELL',
-      collegeId: iitb.id,
+      courseCode: 'MATH 51',
+      collegeId: mitCsn.id,
       sellerId: priya.id,
       pickupLocationId: hubMainGate.id,
       pickupLocationName: hubMainGate.name,
@@ -351,19 +253,21 @@ async function main() {
     data: { itemId: itemCalc.id, url: 'https://images.unsplash.com/photo-1594980596870-8aa52a78d8cd', order: 0 },
   });
 
+  // Item 3: BORROW (Lab Kit)
   const itemBorrowKit = await prisma.item.create({
     data: {
       title: 'Arduino Uno Rev 3 & Sensor Experimentation Kit',
-      description: 'Full microcontroller kit with breadboard, ultrasonic sensor, motors and jumper wires for semester lab project.',
-      category: 'Lab Equipment',
+      description: 'Full microcontroller kit with breadboard, ultrasonic sensor, servo motors and jumper wires for semester lab projects.',
+      category: 'Lab Components',
       condition: 'Like New',
       price: 150.0,
       transactionType: 'BORROW',
       maxBorrowDays: 14,
-      collegeId: iitb.id,
+      courseCode: 'EE 108',
+      collegeId: mitCsn.id,
       sellerId: priya.id,
-      pickupLocationId: hubHostelQuad.id,
-      pickupLocationName: hubHostelQuad.name,
+      pickupLocationId: hubCseBlock.id,
+      pickupLocationName: hubCseBlock.name,
       isAvailable: true,
       status: 'ACTIVE',
     },
@@ -372,16 +276,17 @@ async function main() {
     data: { itemId: itemBorrowKit.id, url: 'https://images.unsplash.com/photo-1553406830-ef2513450d76', order: 0 },
   });
 
+  // Item 4: EXCHANGE (Electronics)
   const itemExchangePi = await prisma.item.create({
     data: {
       title: 'Raspberry Pi 4 Model B (4GB RAM)',
-      description: 'Works perfectly in aluminum heatsink case with 32GB MicroSD. Looking to exchange for FPGA development board.',
+      description: 'Works perfectly in aluminum heatsink case with 32GB MicroSD. Looking to exchange for FPGA development board or STM32 kit.',
       category: 'Electronics',
       condition: 'Excellent',
       price: 0.0,
       transactionType: 'EXCHANGE',
       exchangePreferences: 'Basys 3 FPGA Board or STM32 Discovery kit',
-      collegeId: iitb.id,
+      collegeId: mitCsn.id,
       sellerId: aniket.id,
       pickupLocationId: hubLibrary.id,
       pickupLocationName: hubLibrary.name,
@@ -393,15 +298,17 @@ async function main() {
     data: { itemId: itemExchangePi.id, url: 'https://images.unsplash.com/photo-1517055729441-db3a681329a2', order: 0 },
   });
 
+  // Item 5: DONATE (Drawing Kit - Free)
   const itemDonateTSquare = await prisma.item.create({
     data: {
       title: 'Architectural Drafting T-Square & Acrylic Set Triangles',
-      description: 'Graduating senior donating drafting tools. Passing on to 1st year engineering student.',
-      category: 'Notes & Study Material',
+      description: 'Graduating senior donating drafting tools. Free to any 1st year MIT CSN engineering student in need.',
+      category: 'Drawing Kits',
       condition: 'Good',
       price: 0.0,
       transactionType: 'DONATE',
-      collegeId: iitb.id,
+      courseCode: 'ARCH 101',
+      collegeId: mitCsn.id,
       sellerId: aniket.id,
       pickupLocationId: hubMainGate.id,
       pickupLocationName: hubMainGate.name,
@@ -413,10 +320,11 @@ async function main() {
     data: { itemId: itemDonateTSquare.id, url: 'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e', order: 0 },
   });
 
+  // Item 6: DIGITAL (Course Access)
   const itemDigitalCourse = await prisma.item.create({
     data: {
       title: 'Pearson MyLab Engineering Official Access Voucher',
-      description: 'Officially transferable voucher code for Mechanics course portal. Valid through end of academic year.',
+      description: 'Transferable voucher code for Mechanics course portal. Valid through end of academic year.',
       category: 'Digital Courses',
       condition: 'New',
       price: 499.0,
@@ -424,8 +332,10 @@ async function main() {
       isDigital: true,
       digitalProvider: 'Pearson MyLab',
       courseCode: 'ME 201',
-      collegeId: iitb.id,
+      collegeId: mitCsn.id,
       sellerId: priya.id,
+      pickupLocationId: hubCafeteria.id,
+      pickupLocationName: hubCafeteria.name,
       isAvailable: true,
       status: 'ACTIVE',
     },
@@ -434,7 +344,7 @@ async function main() {
     data: { itemId: itemDigitalCourse.id, url: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3', order: 0 },
   });
 
-  // 8. Create Conversation and Messages
+  // 8. Create Conversation and Messages between Rahul and Aniket
   const convo = await prisma.conversation.create({
     data: {
       itemId: itemBook.id,
@@ -457,7 +367,7 @@ async function main() {
     data: {
       conversationId: convo.id,
       senderId: aniket.id,
-      text: 'Yes Rahul! I have it with me. Can meet at the 1st floor study lounge today.',
+      text: 'Yes Rahul! I have it with me. Can meet at the MIT CSN Central Library Ground Floor today.',
       type: 'TEXT',
       createdAt: new Date(Date.now() - 3000 * 1000),
     },
@@ -472,7 +382,7 @@ async function main() {
       sellerId: aniket.id,
       originalPrice: 350.0,
       offeredPrice: 280.0,
-      message: 'Would you accept ₹280 for campus pickup today?',
+      message: 'Would you accept ₹280 for campus pickup today at the Central Library?',
       status: 'ACCEPTED',
       createdAt: new Date(Date.now() - 2500 * 1000),
     },
@@ -482,7 +392,7 @@ async function main() {
     data: {
       conversationId: convo.id,
       senderId: rahul.id,
-      text: 'Proposed an offer: ₹280.00 - "Would you accept ₹280 for campus pickup today?"',
+      text: 'Proposed an offer: ₹280.00 - "Would you accept ₹280 for campus pickup today at the Central Library?"',
       type: 'OFFER',
       metadata: { offerId: offer.id, offeredPrice: 280.0, status: 'ACCEPTED' },
       createdAt: new Date(Date.now() - 2500 * 1000),
@@ -501,36 +411,36 @@ async function main() {
   });
 
   // 10. Create Active and Completed Transactions
-  // Transaction 1: Agreed & Scheduled for Pickup (Rahul & Aniket)
-  const tx1 = await prisma.transaction.create({
+  // Transaction 1: Ready for Pickup (Rahul & Aniket)
+  await prisma.transaction.create({
     data: {
       itemId: itemBook.id,
       buyerId: rahul.id,
       sellerId: aniket.id,
-      collegeId: iitb.id,
+      collegeId: mitCsn.id,
       transactionType: 'SELL',
-      agreedPrice: 280.0, // LOCKED to accepted offer price!
+      agreedPrice: 280.0,
       status: 'READY_FOR_PICKUP',
       pickupLocationId: hubLibrary.id,
       pickupLocationName: hubLibrary.name,
       pickupScheduledAt: new Date(Date.now() + 2 * 3600 * 1000),
-      qrVerificationCode: 'CL-TX1-994821AB084',
+      qrVerificationCode: 'CL-MIT-TX01-7788',
     },
   });
 
-  // Transaction 2: Completed Borrow Transaction (Priya & Aniket)
-  const tx2 = await prisma.transaction.create({
+  // Transaction 2: Completed Borrow (Priya & Aniket)
+  await prisma.transaction.create({
     data: {
       itemId: itemBorrowKit.id,
       buyerId: aniket.id,
       sellerId: priya.id,
-      collegeId: iitb.id,
+      collegeId: mitCsn.id,
       transactionType: 'BORROW',
       agreedPrice: 150.0,
       status: 'COMPLETED',
-      pickupLocationId: hubHostelQuad.id,
-      pickupLocationName: hubHostelQuad.name,
-      borrowStartDate: new Date(Date.now() - 12 * 24 * 3600 * 1000),
+      pickupLocationId: hubCseBlock.id,
+      pickupLocationName: hubCseBlock.name,
+      borrowStartDate: new Date(Date.now() - 10 * 24 * 3600 * 1000),
       expectedReturnDate: new Date(Date.now() - 2 * 24 * 3600 * 1000),
       actualReturnDate: new Date(Date.now() - 2 * 24 * 3600 * 1000),
       completedAt: new Date(Date.now() - 2 * 24 * 3600 * 1000),
@@ -543,13 +453,13 @@ async function main() {
       itemId: itemCalc.id,
       buyerId: aniket.id,
       sellerId: priya.id,
-      collegeId: iitb.id,
+      collegeId: mitCsn.id,
       transactionType: 'SELL',
       agreedPrice: 1100.0,
       status: 'RATED',
       pickupLocationId: hubMainGate.id,
       pickupLocationName: hubMainGate.name,
-      completedAt: new Date(Date.now() - 5 * 24 * 3600 * 1000),
+      completedAt: new Date(Date.now() - 4 * 24 * 3600 * 1000),
     },
   });
 
@@ -559,30 +469,14 @@ async function main() {
       raterId: aniket.id,
       rateeId: priya.id,
       rating: 5.0,
-      review: 'Calculator was in mint condition with fresh batteries. Priya was right on time at the Main Gate!',
+      review: 'Calculator was in mint condition with fresh batteries. Priya was right on time at the MIT CSN Main Gate!',
     },
   });
 
-  // 11. Create Sample Reports
-  await prisma.report.create({
-    data: {
-      reporterId: rahul.id,
-      reportedUserId: priya.id,
-      listingId: itemCalc.id,
-      reason: 'Transaction dispute inquiry',
-      description: 'Minor dispute regarding battery charging cable resolved amicably.',
-      status: 'RESOLVED',
-      priority: 'LOW',
-      notes: 'Both students verified exchange completed.',
-      resolvedById: iitbAdmin.id,
-      resolvedAt: new Date(),
-    },
-  });
-
-  // 12. Create Subscriptions
+  // 11. Create Subscriptions & Revenue for MIT CSN
   await prisma.subscription.create({
     data: {
-      collegeId: iitb.id,
+      collegeId: mitCsn.id,
       plan: 'PREMIUM',
       status: 'ACTIVE',
       startDate: new Date(Date.now() - 60 * 24 * 3600 * 1000),
@@ -592,75 +486,38 @@ async function main() {
     },
   });
 
-  await prisma.subscription.create({
-    data: {
-      collegeId: stanford.id,
-      plan: 'ENTERPRISE',
-      status: 'ACTIVE',
-      startDate: new Date(Date.now() - 90 * 24 * 3600 * 1000),
-      endDate: new Date(Date.now() + 275 * 24 * 3600 * 1000),
-      amount: 149999.0,
-      billingCycle: 'ANNUAL',
-    },
-  });
-
-  // 13. Create Revenue records
   await prisma.revenue.createMany({
     data: [
       {
-        collegeId: iitb.id,
+        collegeId: mitCsn.id,
         source: 'SUBSCRIPTION',
         amount: 99999.0,
-        description: 'Annual Campus Enterprise Subscription - IIT Bombay',
+        description: 'Annual Campus Enterprise Subscription - MIT CSN',
         createdAt: new Date(Date.now() - 60 * 24 * 3600 * 1000),
       },
       {
-        collegeId: stanford.id,
-        source: 'SUBSCRIPTION',
-        amount: 149999.0,
-        description: 'Annual Campus Sustainability Partner License - Stanford University',
-        createdAt: new Date(Date.now() - 90 * 24 * 3600 * 1000),
-      },
-      {
-        collegeId: iitb.id,
+        collegeId: mitCsn.id,
         source: 'TRANSACTION_FEE',
         amount: 35.0,
-        description: 'Circulation Service Processing Fee (Tx #tx_001)',
-        createdAt: new Date(Date.now() - 5 * 24 * 3600 * 1000),
-      },
-      {
-        collegeId: iitb.id,
-        source: 'PARTNERSHIP',
-        amount: 25000.0,
-        description: 'Campus Bookstore Circular Sponsorship Grant',
-        createdAt: new Date(Date.now() - 20 * 24 * 3600 * 1000),
+        description: 'Circulation Service Processing Fee (Tx #tx_mit_01)',
+        createdAt: new Date(Date.now() - 4 * 24 * 3600 * 1000),
       },
     ],
   });
 
-  // 14. Create Notifications / Announcements
+  // 12. Create Announcements / Notifications
   await prisma.notification.create({
     data: {
-      title: 'Welcome to CampusLoop Fall 2026 Circular Exchange',
-      message: 'Verified campus pickup locations are now live across all quads and central libraries.',
-      targetAudience: 'ALL',
-      status: 'SENT',
-      sentAt: new Date(Date.now() - 7 * 24 * 3600 * 1000),
-    },
-  });
-
-  await prisma.notification.create({
-    data: {
-      collegeId: iitb.id,
-      title: 'IIT Bombay Library Pickups Active',
-      message: 'Central Library 1st Floor Study Lounge is the designated safety hub for all academic textbook handoffs.',
+      collegeId: mitCsn.id,
+      title: 'Welcome to MIT CSN CampusLoop Circular Exchange',
+      message: 'Verified campus pickup safe locations are now active at the Main Gate, Central Library, and CSE Block.',
       targetAudience: 'COLLEGE',
       status: 'SENT',
-      sentAt: new Date(Date.now() - 2 * 24 * 3600 * 1000),
+      sentAt: new Date(),
     },
   });
 
-  // 15. Create Audit Logs
+  // 13. Create Audit Logs
   await prisma.auditLog.createMany({
     data: [
       {
@@ -669,9 +526,9 @@ async function main() {
         role: 'SUPER_ADMIN',
         action: 'COLLEGE_CREATED',
         entityType: 'College',
-        entityId: iitb.id,
-        metadata: { name: iitb.name, code: iitb.code },
-        timestamp: new Date(Date.now() - 60 * 24 * 3600 * 1000),
+        entityId: mitCsn.id,
+        metadata: { name: mitCsn.name, code: mitCsn.code, emailDomain: mitCsn.emailDomain },
+        timestamp: new Date(Date.now() - 30 * 24 * 3600 * 1000),
       },
       {
         adminId: superAdmin.id,
@@ -679,39 +536,20 @@ async function main() {
         role: 'SUPER_ADMIN',
         action: 'ADMIN_CREATED',
         entityType: 'CollegeAdmin',
-        entityId: iitbAdmin.id,
-        metadata: { email: iitbAdmin.email, college: iitb.name },
-        timestamp: new Date(Date.now() - 59 * 24 * 3600 * 1000),
-      },
-      {
-        adminId: iitbAdmin.id,
-        adminName: iitbAdmin.name,
-        role: 'COLLEGE_ADMIN',
-        action: 'STUDENT_VERIFIED',
-        entityType: 'User',
-        entityId: aniket.id,
-        metadata: { rollNumber: aniket.rollNumber, department: aniket.department },
-        timestamp: new Date(Date.now() - 30 * 24 * 3600 * 1000),
-      },
-      {
-        adminId: iitbAdmin.id,
-        adminName: iitbAdmin.name,
-        role: 'COLLEGE_ADMIN',
-        action: 'PICKUP_LOCATION_CREATED',
-        entityType: 'PickupLocation',
-        entityId: hubLibrary.id,
-        metadata: { name: hubLibrary.name },
-        timestamp: new Date(Date.now() - 25 * 24 * 3600 * 1000),
+        entityId: mitAdmin.id,
+        metadata: { email: mitAdmin.email, college: mitCsn.name },
+        timestamp: new Date(Date.now() - 29 * 24 * 3600 * 1000),
       },
     ],
   });
 
-  console.log('Seeding completed successfully!');
+  console.log('MIT CSN Seeding completed successfully!');
   console.log('Credentials:');
-  console.log('Super Admin: superadmin@campusloop.in / SuperAdmin123!');
-  console.log('IITB Admin:  admin.iitb@campusloop.in / CollegeAdmin123!');
-  console.log('Stanford Admin: admin.stanford@campusloop.in / CollegeAdmin123!');
-  console.log('Student (Aniket): aniket@iitb.ac.in / Student123!');
+  console.log('Super Admin:    superadmin@campusloop.in / SuperAdmin123!');
+  console.log('MIT CSN Admin:  admin@mit.asia / CollegeAdmin123!');
+  console.log('Student 1:      aniket@mit.asia / Student123!');
+  console.log('Student 2:      priya@mit.asia / Student123!');
+  console.log('Student 3:      rahul@mit.asia / Student123!');
 }
 
 main()
