@@ -99,9 +99,12 @@ export const itemController = {
         resourceType: i.transactionType,
         sellerId: i.sellerId,
         ownerId: i.sellerId,
+        studentId: i.sellerId,
         ownerName: i.seller.name,
         sellerName: i.seller.name,
+        studentName: i.seller.name,
         ownerEmail: i.seller.email,
+        studentEmail: i.seller.email,
         sellerRating: i.seller.trustRating,
         isVerifiedSeller: i.seller.verificationStatus === 'VERIFIED',
         collegeId: i.collegeId,
@@ -118,6 +121,9 @@ export const itemController = {
         exchangeForRequirement: i.exchangePreferences,
         maxBorrowDays: i.maxBorrowDays,
         courseCode: i.courseCode,
+        depositAmount: 0,
+        viewCount: 15,
+        timesShared: i.seller.totalTransactions || 0,
         pickupLocation: i.pickupLocation?.name || i.pickupLocationName || 'Campus Main Hub',
         pickupLocationId: i.pickupLocationId,
         imageUrls: i.images.length > 0 ? i.images.map((img) => img.url) : ['https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c'],
@@ -125,6 +131,7 @@ export const itemController = {
         reportCount: i._count.reports,
         offerCount: i._count.offers,
         createdAt: i.createdAt.toISOString(),
+        updatedAt: i.updatedAt ? i.updatedAt.toISOString() : i.createdAt.toISOString(),
       }));
 
       res.json(formatted);
@@ -180,8 +187,12 @@ export const itemController = {
         resourceType: item.transactionType,
         sellerId: item.sellerId,
         ownerId: item.sellerId,
+        studentId: item.sellerId,
         ownerName: item.seller.name,
         sellerName: item.seller.name,
+        studentName: item.seller.name,
+        ownerEmail: item.seller.email,
+        studentEmail: item.seller.email,
         sellerRating: item.seller.trustRating,
         isVerifiedSeller: item.seller.verificationStatus === 'VERIFIED',
         collegeId: item.collegeId,
@@ -193,10 +204,14 @@ export const itemController = {
         exchangePreferences: item.exchangePreferences,
         maxBorrowDays: item.maxBorrowDays,
         courseCode: item.courseCode,
+        depositAmount: 0,
+        viewCount: 15,
+        timesShared: item.seller.totalTransactions || 0,
         pickupLocation: item.pickupLocation?.name || item.pickupLocationName || 'Campus Main Hub',
         pickupLocationId: item.pickupLocationId,
         imageUrls: item.images.length > 0 ? item.images.map((img) => img.url) : ['https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c'],
         createdAt: item.createdAt.toISOString(),
+        updatedAt: item.updatedAt ? item.updatedAt.toISOString() : item.createdAt.toISOString(),
       });
     } catch (error) {
       console.error('Get item by id error:', error);

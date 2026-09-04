@@ -25,6 +25,7 @@ router.use('/colleges', collegeRoutes);
 router.use('/college-admins', collegeAdminRoutes);
 router.use('/students', studentRoutes);
 router.use('/items', itemRoutes);
+router.use('/listings', itemRoutes);
 router.use('/upload', uploadRoutes);
 router.use('/requests', requestRoutes);
 router.use('/conversations', conversationRoutes);
